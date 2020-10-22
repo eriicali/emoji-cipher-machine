@@ -1,7 +1,7 @@
 import random
 
 
-def create_emoji_list(filename):
+def create_emoji_list(filename) -> list:
     with open(filename, "r") as file:
         listOfEmojis = file.readlines()
         listOfEmojis = [item.strip() for item in listOfEmojis]
@@ -9,19 +9,26 @@ def create_emoji_list(filename):
     return listOfEmojis
 
 
-def create_dictionaries(listOfEmojis) -> tuple:
+def create_character_list() -> list:
+    listOfCharacters = []
+    for i in range(97, 123):
+        listOfCharacters.append(chr(i))
+    for i in range(65, 91):
+        listOfCharacters.append(chr(i))
+    for j in range(0, 10):
+        listOfCharacters.append(str(j))
+    listOfCharacters.append(" ")
+    return listOfCharacters
+
+
+def create_dictionaries(listOfEmojis, listOfCharacters) -> tuple:
     emoji_dict_encode = {}
     emoji_dict_decode = {}
-    characters = []
-    for i in range(97, 123):
-        characters.append(chr(i))
-    for j in range(0, 10):
-        characters.append(j)
-    characters.append(" ")
-    for i in range(37):
-        emoji_dict_encode[characters[i]] = listOfEmojis[i]
-    for i in range(37):
-        emoji_dict_decode[listOfEmojis[i]] = characters[i]
+    for k in range(len(listOfCharacters)):
+        emoji_dict_encode[listOfCharacters[k]] = listOfEmojis[k]
+        emoji_dict_decode[listOfEmojis[k]] = listOfCharacters[k]
+    emoji_dict_encode[""] = ""
+    emoji_dict_decode[""] = ""
     return emoji_dict_encode, emoji_dict_decode
 
 
@@ -41,16 +48,18 @@ def decode(msgToDecode, emoji_dict_decode) -> str:
 
 def main():
     listOfEmojis = create_emoji_list("emojis.txt")
-    emoji_dict_encode, emoji_dict_decode = create_dictionaries(listOfEmojis)
-
+    listOfCharacters = create_character_list()
+    emoji_dict_encode, emoji_dict_decode = create_dictionaries(listOfEmojis, listOfCharacters)
+    print("\n\n\n************** Emoji Cipher Machine ********************")
+    print("\n\n\nThis supports any uppercase or lowercase letter, any digit 0-9, and spaces.")
     while True:
-        choice = input("Would you like to encode or decode? (e/d), anything else will stop the program: ")
+        choice = input("\nWould you like to encode or decode? (e/d), anything else will stop the program: ")
         if choice == "e":
             msg = input("Enter your message to encode: ")
-            print(encode(msg, emoji_dict_encode))
+            print("Encoded message: " + encode(msg.strip(), emoji_dict_encode))
         elif choice == "d":
             msg = input("Enter your message to decode: ")
-            print(decode(msg, emoji_dict_decode))
+            print("Decoded message: " + decode(msg.strip(), emoji_dict_decode))
         else:
             break
 
